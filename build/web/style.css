@@ -1,0 +1,41 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 40px);
+    grid-template-rows: repeat(10, 30px);
+    gap: 2px;
+    margin: 20px auto;
+    width: 480px;
+    height: 300px;
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    height: 100%;
+    width: 100%;
+}
+
+#start {
+    background-color: green;
+    color: white;
+}
+
+#goal {
+    background-color: red;
+    color: white;
+}
+
+#agent {
+    background-color: blue;
+    color: white;
+}

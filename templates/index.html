@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Q-Learning Visual</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Simulação Q-Learning</h1>
+
+  <form id="config-form" onsubmit="treinar(); return false;">
+    <label>Épisódios:
+      <input type="number" id="input-episodios" value="300" min="1">
+    </label>
+    <label>Delay passo (ms):
+      <input type="number" id="input-step-delay" value="100" min="0">
+    </label>
+    <label>Delay episódio (ms):
+      <input type="number" id="input-ep-delay" value="500" min="0">
+    </label>
+    <label>Epsilon (0–1):
+      <input type="number" id="input-epsilon" step="0.01" value="0.3" min="0" max="1">
+    </label>
+    <label>Alpha (taxa aprendizado):
+      <input type="number" id="input-alpha" step="0.01" value="0.1" min="0">
+    </label>
+    <label>Gamma (fator desconto):
+      <input type="number" id="input-gamma" step="0.01" value="0.9" min="0" max="1">
+    </label>
+    <label>Reward Obstáculo:
+      <input type="number" id="input-r-obstaculo" value="-100" step="1">
+    </label>
+    <label>Reward Parede:
+      <input type="number" id="input-r-parede" value="-10" step="1">
+    </label>
+    <label>Reward Objetivo:
+      <input type="number" id="input-r-objetivo" value="100" step="1">
+    </label>
+    <button type="submit">Iniciar Treinamento</button>
+  </form>
+
+
+  <div id="info">Preencha os parâmetros e clique em Iniciar Treinamento.</div>
+  <div class="grid" id="grid"></div>
+  <div id="chart-container">
+      <canvas id="stepsChart"></canvas>
+  </div>
+  <div id="log-container"></div>
+
+
+
+
+  <script>
+    const linhas = 10, colunas = 12;
+    const inicio = [9,4], objetivo=[4,11];
+    const paredes    = [[5,0],[5,1],[5,2],[5,3],[5,8],[5,9],[5,10],[5,11],[6,3],[7,3],[8,3],[9,3],[6,8],[7,8],[8,8],[9,8],[6,0], [6,1], [6,2], [6,9], [6,10], [6,11],
+  [7,0], [7,1], [7,2], [7,9], [7,10], [7,11],
+  [8,0], [8,1], [8,2], [8,9], [8,10], [8,11],
+  [9,0], [9,1], [9,2], [9,9], [9,10], [9,11]];
+    const obstaculos = [[1,1],[2,2],[3,1],[2,0],[0,11],[0,4],[1,11],[2,6],[5,6],[8,6],[2,8],[2,9],[3,8]];
+
+    let stepDelay = 100, epDelay = 500;
+    let chartInstance = null;
+
+    function criarGrid(){
+      const g = document.getElementById('grid');
+      g.innerHTML = '';
+      for(let i=0;i<linhas*colunas;i++){
+        let cell = document.createElement('div');
+        cell.className = 'cell';
+        g.appendChild(cell);
+      }
+      desenhar(inicio,'inicio');
+      desenhar(objetivo,'objetivo');
+      paredes.forEach(p=>desenhar(p,'parede'));
+      obstaculos.forEach(o=>desenhar(o,'obstaculo'));
+    }
+    function desenhar([l,c], cls){
+      const idx = l*colunas + c;
+      document.getElementsByClassName('cell')[idx].classList.add(cls);
+    }
+    function limpar([l,c], cls){
+      const idx = l*colunas + c;
+      document.getElementsByClassName('cell')[idx].classList.remove(cls);
+    }
+
+    function createTableChunk(){
+      const tbl = document.createElement('table');
+      tbl.className='log';
+      tbl.innerHTML = `
+        <thead>
+          <tr><th>Ep</th><th>Passos</th>
+        </thead>
+        <tbody></tbody>
+      `;
+      document.getElementById('log-container').appendChild(tbl);
+      return tbl.querySelector('tbody');
+    }
+
+    function animar(caminho, cb){
+      let i=0, t0=performance.now();
+      criarGrid();
+      const iv = setInterval(()=>{
+        if(i>0) limpar(caminho[i-1],'agente');
+        if(i<caminho.length){
+          desenhar(caminho[i],'agente');
+          i++;
+        } else {
+          clearInterval(iv);
+          let dur = Math.round(performance.now() - t0);
+          cb(caminho.length-1, dur);
+        }
+      }, stepDelay);
+    }
+
+    function animarTodas(trajs){
+      document.getElementById('log-container').innerHTML = '';
+      let ep = 0, tbody = createTableChunk();
+      const info = document.getElementById('info');
+
+      function next(){
+        if(ep >= trajs.length){
+          info.innerText = `Treinamento concluído (${ep} episódios).`;
+          return;
+        }
+        if(ep>0 && ep%20===0){
+          tbody = createTableChunk();
+        }
+        info.innerText = `Episódio ${ep+1} / ${trajs.length}`;
+        animar(trajs[ep], (passos, tempo)=>{
+          let tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${ep+1}</td>
+            <td>${passos}</td>`;
+          tbody.appendChild(tr);
+          ep++;
+          setTimeout(next, epDelay);
+        });
+      }
+      next();
+    }
+
+    function renderChart(steps){
+      const ctx = document.getElementById('stepsChart').getContext('2d');
+      if(chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: steps.map((_,i) => i+1),
+          datasets: [{
+            label: 'Passos por Episódio',
+            data: steps,
+            borderColor: '#008B8B',
+            fill: false,
+            tension: 0.1
+          }]
+        },
+        options: {
+          scales: {
+            x: { title: { display:true, text:'Episódio' } },
+            y: { title: { display:true, text:'Passos' } }
+          }
+        }
+      });
+    }
+
+    function treinar(){
+      const cfg = {
+        episodios:    document.getElementById('input-episodios').value,
+        alpha:        document.getElementById('input-alpha').value,
+        gamma:        document.getElementById('input-gamma').value,
+        epsilon:      document.getElementById('input-epsilon').value,
+        r_obstaculo:  document.getElementById('input-r-obstaculo').value,
+        r_parede:     document.getElementById('input-r-parede').value,
+        r_objetivo:   document.getElementById('input-r-objetivo').value
+      };
+      stepDelay = Number(document.getElementById('input-step-delay').value);
+      epDelay   = Number(document.getElementById('input-ep-delay').value);
+
+      fetch('/treinar', {
+        method: 'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(cfg)
+      })
+      .then(r => r.json())
+      .then(data => {
+        const trajs = data.trajetorias;
+        // gera gráfico
+        const steps = trajs.map(t => t.length - 1);
+        renderChart(steps);
+        // anima
+        animarTodas(trajs);
+      })
+      .catch(e => alert('Erro: '+e));
+    }
+
+    // ao carregar
+    criarGrid();
+  </script>
+</body>
+</html>

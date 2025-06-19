@@ -1,0 +1,83 @@
+body {
+  font-family: sans-serif;
+  background: #0ABAB5;
+  text-align: center;
+  margin: 0; padding: 0;
+  color: #333333;
+}
+table{
+  background: #5D6D7E;
+  color: #f4f4f4;
+}
+#config-form {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+  max-width: 700px;
+  margin: 20px auto;
+}
+
+#config-form label {
+  display: flex;
+  flex-direction: column;
+  text-align:left;
+}
+
+button {
+  grid-column: span 3;
+  padding: 8px 16px;
+  font-size: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, 40px);
+  grid-template-rows: repeat(10, 30px);
+  gap: 2px;
+  margin: 20px auto;
+  width: fit-content;
+}
+
+.cell       { width: 40px; height: 30px; background: #ADEED9; border:1px solid #ccc; }
+.parede     { background: #008B8B; }      /* mantendo o ciano escuro */
+.obstaculo  { background: #F5B041; }      /* substitui o vermelho por amarelo queimado */
+.inicio     { background: #5D6D7E; }      /* substitui o preto por cinza-azulado escuro */
+.objetivo   { background: #48C9B0; }      /* troca o verde escuro por verde-água */
+.agente     { background: #E59866; }      /* troca o rosa por um laranja-coral suave */
+
+#log-container {
+  padding: 10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  justify-content:center;
+}
+
+.log {
+  border:1px solid #888;
+  border-collapse: collapse;
+  width:260px;
+}
+
+.log th, .log td {
+  border:1px solid #888;
+  padding:4px;
+}
+
+.log input {
+  width:100%;
+  box-sizing:border-box;
+}
+
+#chart-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #ADEED9;
+  padding: 20px;
+  border: 1px solid #ccc;
+}
+
+#info {
+  margin: 10px;
+  font-size: 18px;
+}

@@ -1,5 +1,6 @@
 import random
-
+import copy
+Q_por_ep = []
 linhas = 10
 colunas = 12
 # movimentos: cima, baixo, esquerda, direita
@@ -65,7 +66,7 @@ def executar_q_learning(
         estado = inicio
         caminho = [estado]
         passos = 0
-
+        Q_por_ep.append(copy.deepcopy(Q))
         while estado != objetivo and passos < 150:
             acao = escolher_acao(estado, Q, epsilon)
             prox, recompensa = passo(
@@ -75,7 +76,7 @@ def executar_q_learning(
                 recompensa_objetivo
             )
 
-            l, c   = estado
+            l, c = estado
             pl, pc = prox
 
             # Q-Learning update
@@ -91,4 +92,5 @@ def executar_q_learning(
 
         trajetorias.append(caminho)
 
-    return {"trajetorias": trajetorias}
+    return {"trajetorias": trajetorias, "Q": Q}
+

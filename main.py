@@ -3,10 +3,9 @@ import copy
 Q_por_ep = []
 linhas = 10
 colunas = 12
-# movimentos: cima, baixo, esquerda, direita
+# cima, baixo, esquerda, direita
 acoes = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
-# posições fixas
 obstaculos = {(1,1),(2,2),(3,1),(2,0),(0,11),(0,4),(1,11),
               (2,6),(5,6),(8,6),(2,8),(2,9),(3,8)}
 paredes = {(5,0),(5,1),(5,2),(5,3),(5,8),(5,9),(5,10),(5,11),
@@ -17,8 +16,10 @@ paredes = {(5,0),(5,1),(5,2),(5,3),(5,8),(5,9),(5,10),(5,11),
     (9,0), (9,1), (9,2), (9,9), (9,10), (9,11)
 
 }
+
 inicio   = (9,4)
 objetivo = (4,11)
+
 posicoes_validas = {
     (l, c)
     for l in range(linhas)
@@ -32,14 +33,14 @@ def passo(estado, acao, r_obs, r_wall, r_goal):
     nl, nc = l + dl, c + dc
 
     if (nl, nc) in obstaculos:
-        return estado, r_obs
+        return estado, r_obs #bate no obstaculo
     if (nl, nc) in paredes:
-        return estado, r_wall
+        return estado, r_wall #bate na parede
     if (nl, nc) in posicoes_validas:
         if (nl, nc) == objetivo:
             return (nl, nc), r_goal
-        return (nl, nc), -5  # movimento normal
-    return estado, r_wall  # bate em borda
+        return (nl, nc), -1  # movimento normal
+    return estado, r_wall  # bate na borda
 
 def escolher_acao(estado, Q, epsilon):
     l, c = estado
@@ -79,7 +80,6 @@ def executar_q_learning(
             l, c = estado
             pl, pc = prox
 
-            # Q-Learning update
             Q[l][c][acao] += taxa_aprendizado * (
                 recompensa +
                 fator_desconto * max(Q[pl][pc]) -
@@ -93,4 +93,3 @@ def executar_q_learning(
         trajetorias.append(caminho)
 
     return {"trajetorias": trajetorias, "Q": Q}
-

@@ -11,22 +11,22 @@
 
 <form id="config-form" onsubmit="treinar(); return false;">
     <label>Épisódios:
-        <input type="number" id="input-episodios" value="300" min="1">
+        <input type="number" id="input-episodios" value="600" min="1">
     </label>
     <label>Delay passo (ms):
-        <input type="number" id="input-step-delay" value="100" min="0">
+        <input type="number" id="input-step-delay" value="10" min="0">
     </label>
     <label>Delay episódio (ms):
-        <input type="number" id="input-ep-delay" value="500" min="0">
+        <input type="number" id="input-ep-delay" value="50" min="0">
     </label>
     <label>Epsilon (0–1):
-        <input type="number" id="input-epsilon" step="0.01" value="0.3" min="0" max="1">
+        <input type="number" id="input-epsilon" step="0.01" value="0.5" min="0" max="1">
     </label>
     <label>Alpha (taxa aprendizado):
-        <input type="number" id="input-alpha" step="0.01" value="0.1" min="0">
+        <input type="number" id="input-alpha" step="0.01" value="0.2" min="0">
     </label>
     <label>Gamma (fator desconto):
-        <input type="number" id="input-gamma" step="0.01" value="0.9" min="0" max="1">
+        <input type="number" id="input-gamma" step="0.01" value="0.8" min="0" max="1">
     </label>
     <label>Reward Obstáculo:
         <input type="number" id="input-r-obstaculo" value="-100" step="1">
@@ -35,7 +35,7 @@
         <input type="number" id="input-r-parede" value="-10" step="1">
     </label>
     <label>Reward Objetivo:
-        <input type="number" id="input-r-objetivo" value="100" step="1">
+        <input type="number" id="input-r-objetivo" value="80" step="1">
     </label>
     <button type="submit">Iniciar Treinamento</button>
 </form>

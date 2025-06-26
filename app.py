@@ -10,15 +10,16 @@ def index():
 @app.route('/treinar', methods=['POST'])
 def treinar():
     cfg = request.get_json() or {}
-    # parâmetros de aprendizagem
-    episodios        = int(cfg.get('episodios', 300))
-    taxa_aprendizado = float(cfg.get('alpha',      0.1))
-    fator_desconto   = float(cfg.get('gamma',      0.9))
-    epsilon          = float(cfg.get('epsilon',    0.3))
-    # recompensas customizáveis
+    # parâmetros
+    episodios        = int(cfg.get('episodios', 600))
+    taxa_aprendizado = float(cfg.get('alpha',      0.2))
+    fator_desconto   = float(cfg.get('gamma',      0.8))
+    epsilon          = float(cfg.get('epsilon',    0.5))
+
+    # recompensas
     r_obs            = float(cfg.get('r_obstaculo', -100))
     r_wall           = float(cfg.get('r_parede',    -10))
-    r_goal           = float(cfg.get('r_objetivo',  100))
+    r_goal           = float(cfg.get('r_objetivo',  80))
 
     resultado = executar_q_learning(
         episodios=episodios,

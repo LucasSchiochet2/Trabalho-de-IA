@@ -11,10 +11,10 @@ def index():
 def treinar():
     cfg = request.get_json() or {}
     # parâmetros
-    episodios        = int(cfg.get('episodios', 600))
+    episodios        = int(cfg.get('episodios', 2000))
     taxa_aprendizado = float(cfg.get('alpha',      0.2))
     fator_desconto   = float(cfg.get('gamma',      0.8))
-    epsilon          = float(cfg.get('epsilon',    0.5))
+    epsilon          = float(cfg.get('epsilon',    0.9))
 
     # recompensas
     r_obs            = float(cfg.get('r_obstaculo', -100))

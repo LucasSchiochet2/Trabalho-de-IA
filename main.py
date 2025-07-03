@@ -33,7 +33,7 @@ def passo(estado, acao, r_obs, r_wall, r_goal):
     nl, nc = l + dl, c + dc
 
     if (nl, nc) in obstaculos:
-        return estado, r_obs #bate no obstaculo
+        return (nl, nc), r_obs
     if (nl, nc) in paredes:
         return estado, r_wall #bate na parede
     if (nl, nc) in posicoes_validas:
@@ -52,13 +52,13 @@ def escolher_acao(estado, Q, epsilon):
     return random.choice(melhores)
 
 def executar_q_learning(
-    episodios=300,
+    episodios=2000,
     taxa_aprendizado=0.1,
     fator_desconto=0.9,
-    epsilon=0.3,
+    epsilon=0.9,
     recompensa_obstaculo=-100,
     recompensa_parede=-10,
-    recompensa_objetivo=100
+    recompensa_objetivo=80
 ):
     Q = [[[0.0]*4 for _ in range(colunas)] for _ in range(linhas)]
     trajetorias = []
@@ -68,7 +68,7 @@ def executar_q_learning(
         caminho = [estado]
         passos = 0
         Q_por_ep.append(copy.deepcopy(Q))
-        while estado != objetivo and passos < 150:
+        while estado != objetivo and passos < 300:
             acao = escolher_acao(estado, Q, epsilon)
             prox, recompensa = passo(
                 estado, acao,
